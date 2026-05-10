@@ -1,0 +1,4 @@
+com/unl/automata/controller/AutomataController.class
+com/unl/automata/model/Automata.class
+com/unl/automata/service/AutomataService.class
+com/unl/automata/AutomataApplication.class
