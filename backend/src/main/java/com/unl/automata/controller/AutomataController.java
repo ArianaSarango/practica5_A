@@ -14,6 +14,10 @@ public class AutomataController {
     @Autowired
     private AutomataService service;
 
+    /**
+     * Endpoint principal que orquesta la transformación y evaluación de todos los ejercicios.
+     * Recibe una lista de cadenas desde el frontend y devuelve los resultados de los 3 casos.
+     */
     @PostMapping("/ejecutar-todo")
     public Map<String, Object> ejecutarTodo(@RequestBody List<String> pruebas) {
         Map<String, Object> respuestaFinal = new LinkedHashMap<>();
@@ -40,6 +44,9 @@ public class AutomataController {
         return respuestaFinal;
     }
 
+    /**
+     * Ejecuta las pruebas sobre los 3 autómatas (AFND, AFD y Mínimo) para verificar equivalencia.
+     */
     private List<Map<String, Object>> correrPruebas(Automata nfa, Automata dfa, Automata min, List<String> cadenas) {
         List<Map<String, Object>> resultados = new ArrayList<>();
         for (String s : cadenas) {
@@ -52,6 +59,8 @@ public class AutomataController {
         }
         return resultados;
     }
+
+    // --- DEFINICIONES DE LOS EJERCICIOS (AFND ORIGINALES) ---
 
     private Automata crearCompradorAFND() {
         Automata a = new Automata("Comprador_AFND");

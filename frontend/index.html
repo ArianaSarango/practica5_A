@@ -69,7 +69,7 @@
         <div
             style="margin-top: auto; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 15px; font-size: 12px;">
             <p style="margin: 0; font-weight: 600;">Ariana Sarango Tandazo</p>
-            <p style="margin: 5px 0 0 0; opacity: 0.7;">Boris Rengel Japón</p>
+            <p style="margin: 0; font-weight: 600;">Boris Rengel Japón</p>
         </div>
     </div>
 
@@ -238,14 +238,16 @@
                 const data = await res.json();
                 const filas = data[ejercicioActual];
 
-                let html = `<table><thead><tr><th>#</th><th>CADENA</th><th>AFND</th><th>AFD</th><th>MÍNIMO</th></tr></thead><tbody>`;
+                let html = `<table><thead><tr><th>#</th><th>CADENA</th><th>AFND</th><th>AFD</th><th>MÍNIMO</th><th>EQUIVALENCIA</th></tr></thead><tbody>`;
                 filas.forEach((f, index) => {
+                    const esEquivalente = (f.nfa === f.dfa && f.dfa === f.min);
                     html += `<tr>
                          <td>${index + 1}</td>
                          <td><code style="color:var(--sidebar); font-weight:700;">${f.cadena}</code></td>
                          <td><span class="status-badge ${f.nfa}">${f.nfa ? 'ACEPTADA' : 'RECHAZADA'}</span></td>
                          <td><span class="status-badge ${f.dfa}">${f.dfa ? 'ACEPTADA' : 'RECHAZADA'}</span></td>
-                         <td><span class="status-badge ${f.min}">${f.min ? 'ACEPTADA' : 'RECHAZADA'}</span></td></tr>`;
+                         <td><span class="status-badge ${f.min}">${f.min ? 'ACEPTADA' : 'RECHAZADA'}</span></td>
+                         <td>${esEquivalente ? '<span style="color:var(--success); font-weight:bold;">✅ Equivalente</span>' : '<span style="color:var(--danger); font-weight:bold;">❌ Error</span>'}</td></tr>`;
                 });
                 document.getElementById('resultados').innerHTML = html + "</tbody></table>";
             } catch (e) {
