@@ -15,8 +15,10 @@ public class AutomataController {
     private AutomataService service;
 
     /**
-     * Endpoint principal que orquesta la transformación y evaluación de todos los ejercicios.
-     * Recibe una lista de cadenas desde el frontend y devuelve los resultados de los 3 casos.
+     * Endpoint principal que orquesta la transformación y evaluación de todos los
+     * ejercicios.
+     * Recibe una lista de cadenas desde el frontend y devuelve los resultados de
+     * los 3 casos.
      */
     @PostMapping("/ejecutar-todo")
     public Map<String, Object> ejecutarTodo(@RequestBody List<String> pruebas) {
@@ -45,7 +47,8 @@ public class AutomataController {
     }
 
     /**
-     * Ejecuta las pruebas sobre los 3 autómatas (AFND, AFD y Mínimo) para verificar equivalencia.
+     * Ejecuta las pruebas sobre los 3 autómatas (AFND, AFD y Mínimo) para verificar
+     * equivalencia.
      */
     private List<Map<String, Object>> correrPruebas(Automata nfa, Automata dfa, Automata min, List<String> cadenas) {
         List<Map<String, Object>> resultados = new ArrayList<>();
@@ -76,11 +79,13 @@ public class AutomataController {
     private Automata crearIDSAFND() {
         Automata a = new Automata("IDS_AFND");
         a.estadoInicial = "q0";
-        a.agregarTransicion("q0", "A", "q0");
-        a.agregarTransicion("q0", "A", "q1");
-        a.agregarTransicion("q1", "C", "q2");
-        a.agregarTransicion("q2", "K", "q3");
-        a.estadosFinales.add("q3");
+        // Transiciones con el nuevo alfabeto S, A, R, D
+        a.agregarTransicion("q0", "S", "q0"); // Bucle en S
+        a.agregarTransicion("q0", "S", "q1");
+        a.agregarTransicion("q1", "A", "q2");
+        a.agregarTransicion("q2", "R", "q3");
+        a.agregarTransicion("q3", "D", "q4");
+        a.estadosFinales.add("q4");
         return a;
     }
 
