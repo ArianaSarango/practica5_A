@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Automata Dash - UNL</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        .suggestions-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .suggestion-list {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .mini-chip {
+            background: #121214;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .mini-chip:hover {
+            background: #23232a;
+        }
+
+        .mini-chip.ok {
+            border-left-color: var(--success);
+        }
+
+        .mini-chip.fail {
+            border-left-color: var(--danger);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Barra Lateral -->
+    <div class="sidebar">
+        <div class="logo">
+            <span style="font-size: 24px;">⚙️</span> AutomataDash
+        </div>
+
+        <div
+            style="color: rgba(255,255,255,0.5); font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 10px;">
+            Ejercicios</div>
+
+        <div class="nav-item active" onclick="cambiarEjercicio('Comprador', this)">
+            <span>🛒</span> Comprador
+        </div>
+        <div class="nav-item" onclick="cambiarEjercicio('Ciberseguridad', this)">
+            <span>🛡️</span> Ciberseguridad
+        </div>
+        <div class="nav-item" onclick="cambiarEjercicio('Bioinformatica', this)">
+            <span>🧬</span> Bioinformática
+        </div>
+
+        <div
+            style="margin-top: auto; padding: 20px; background: rgba(255,255,255,0.1); border-radius: 15px; font-size: 12px;">
+            <p style="margin: 0; font-weight: 600;">Ariana Sarango Tandazo</p>
+            <p style="margin: 5px 0 0 0; opacity: 0.7;">Boris Rengel Japón</p>
+        </div>
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="main-content">
+
+        <!-- Hero Section -->
+        <div class="hero-card">
+            <h1>Transformación de Autómatas</h1>
+            <p>Convierte, minimiza y evalúa cadenas de forma automática. Selecciona un ejercicio del menú lateral para
+                comenzar el análisis.</p>
+            <div id="active-exercise-badge"
+                style="position: absolute; bottom: 20px; right: 40px; background: rgba(0,0,0,0.3); padding: 10px 20px; border-radius: 30px; font-weight: 700;">
+                📍 Comprador Potencial
+            </div>
+        </div>
+
+        <div class="panels-grid">
+            <!-- Panel de Entrada -->
+            <div class="card">
+                <h2><span>⌨️</span> Editor de Pruebas</h2>
+                <textarea id="inputCadenas" rows="4" placeholder="Ej: HSC, HSSC, HC...">HSC, HSSC, HC</textarea>
+
+                <div class="btn-group">
+                    <button id="mainRun" class="btn-primary" onclick="procesar()">EJECUTAR PIPELINE</button>
+                    <button class="btn-secondary" onclick="limpiarEditor()">LIMPIAR</button>
+                    <button class="btn-secondary" style="background: #ef4565;"
+                        onclick="reiniciarTabla()">REINICIAR</button>
+                </div>
+            </div>
+
+            <!-- Panel de Sugerencias (Reemplaza Estado del Sistema) -->
+            <div class="card">
+                <h2><span>💡</span> Sugerencias de Cadenas</h2>
+                <div class="suggestions-panel">
+                    <div>
+                        <p style="font-size: 10px; font-weight: 700; color: var(--success); margin-bottom: 8px;">
+                            ACEPTADAS (10)</p>
+                        <div id="list-ok" class="suggestion-list"></div>
+                    </div>
+                    <div>
+                        <p style="font-size: 10px; font-weight: 700; color: var(--danger); margin-bottom: 8px;">
+                            RECHAZADAS (10)</p>
+                        <div id="list-fail" class="suggestion-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Diagramas -->
+        <div class="card">
+            <h2><span>🖼️</span> Visualización de Autómatas</h2>
+            <div class="diagrams-container">
+                <div class="diagram-item">
+                    <img id="imgNFA" src="assets/comprador_nfa.png" onclick="abrirZoom(this.src, 'AFND (Original)')">
+                    <p>1. AFND Original</p>
+                </div>
+                <div class="diagram-item">
+                    <img id="imgDFA" src="assets/comprador_dfa.png" onclick="abrirZoom(this.src, 'AFD (Subconjuntos)')">
+                    <p>2. AFD Generado</p>
+                </div>
+                <div class="diagram-item">
+                    <img id="imgMIN" src="assets/comprador_min.png"
+                        onclick="abrirZoom(this.src, 'AFD Mínimo (Particiones)')">
+                    <p>3. AFD Minimizado</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resultados -->
+        <div class="card">
+            <h2><span>📊</span> Resultados de Evaluación</h2>
+            <div id="resultados" class="table-container">
+                <p style="color: var(--text-sec); text-align: center; padding: 20px;">Ejecuta el pipeline para ver los
+                    resultados aquí.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Modal Zoom -->
+    <div id="modalZoom" class="modal" onclick="this.style.display='none'">
+        <h2 id="modalTitulo" style="margin-bottom: 20px;"></h2>
+        <img id="imgZoomed" class="modal-content">
+        <p style="color: var(--text-sec); margin-top: 20px;">Haz clic fuera para cerrar</p>
+    </div>
+
+    <script>
+        let ejercicioActual = 'Comprador';
+        let cadenasAcumuladas = [];
+
+        const datosEjercicios = {
+            "Comprador": {
+                label: "Comprador Potencial",
+                img: ["comprador_nfa.png", "comprador_dfa.png", "comprador_min.png"],
+                ok: ["HSC", "HSSC", "HSSSC", "HSSSSC", "HSSSSSC", "HSSSSSSC", "HSSSSSSSC", "HSSSSSSSSSC", "HSSSSSSSSSSSC", "HSSSSSSSSSSSSSC"],
+                fail: ["H", "HS", "HC", "S", "C", "SC", "HHSC", "HSCC", "HSS", "HSSSSS"]
+            },
+            "Ciberseguridad": {
+                label: "IDS - Ciberseguridad",
+                img: ["ids_nfa.png", "ids_dfa.png", "ids_min.png"],
+                ok: ["ACK", "AACK", "AAACK", "AAAACK", "AAAAACK", "AAAAAACK", "AAAAAAACK", "AAAAAAAACK", "AAAAAAAAACK", "AAAAAAAAAACK"],
+                fail: ["A", "AC", "AK", "CK", "K", "ACC", "AKK", "ACCK", "CAK", "AAA"]
+            },
+            "Bioinformatica": {
+                label: "Bioinformática ADN",
+                img: ["bio_nfa.png", "bio_dfa.png", "bio_min.png"],
+                ok: ["KGF", "KGXF", "KGXXF", "KGXXXF", "KGXXXXF", "KGXXXXXF", "KGXXXXXXF", "KGXXXXXXXF", "KGXXXXXXXXF", "KGXXXXXXXXXF"],
+                fail: ["K", "G", "X", "F", "KG", "GXF", "KXF", "KGFX", "KGFG", "KGX"]
+            }
+        };
+
+        function cambiarEjercicio(ej, element) {
+            ejercicioActual = ej;
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('active-exercise-badge').innerText = `📍 ${datosEjercicios[ej].label}`;
+            actualizarSugerencias();
+        }
+
+        function actualizarSugerencias() {
+            const ej = datosEjercicios[ejercicioActual];
+            document.getElementById('imgNFA').src = `assets/${ej.img[0]}`;
+            document.getElementById('imgDFA').src = `assets/${ej.img[1]}`;
+            document.getElementById('imgMIN').src = `assets/${ej.img[2]}`;
+
+            const listOk = document.getElementById('list-ok');
+            const listFail = document.getElementById('list-fail');
+
+            listOk.innerHTML = ej.ok.map(c => `<div class="mini-chip ok" onclick="add('${c}')">${c} <span>+</span></div>`).join('');
+            listFail.innerHTML = ej.fail.map(c => `<div class="mini-chip fail" onclick="add('${c}')">${c} <span>-</span></div>`).join('');
+        }
+
+        function add(cadena) {
+            const input = document.getElementById('inputCadenas');
+            if (input.value.includes(cadena)) return;
+            input.value += (input.value ? ", " : "") + cadena;
+        }
+
+        function limpiarEditor() {
+            document.getElementById('inputCadenas').value = "";
+        }
+
+        function reiniciarTabla() {
+            cadenasAcumuladas = [];
+            document.getElementById('resultados').innerHTML = '<p style="color: var(--text-sec); text-align: center; padding: 20px;">Tabla reiniciada.</p>';
+        }
+
+        async function procesar() {
+            try {
+                const input = document.getElementById('inputCadenas').value;
+                const nuevas = input.split(',').map(s => s.trim().toUpperCase()).filter(s => s !== "");
+
+                nuevas.forEach(c => {
+                    if (!cadenasAcumuladas.includes(c)) cadenasAcumuladas.push(c);
+                });
+
+                if (cadenasAcumuladas.length === 0) return alert("Introduce cadenas");
+
+                const res = await fetch('http://localhost:8080/api/practica/ejecutar-todo', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(cadenasAcumuladas)
+                });
+
+                const data = await res.json();
+                const filas = data[ejercicioActual];
+
+                let html = `<table><thead><tr><th>#</th><th>CADENA</th><th>AFND</th><th>AFD</th><th>MÍNIMO</th></tr></thead><tbody>`;
+                filas.forEach((f, index) => {
+                    html += `<tr>
+                         <td>${index + 1}</td>
+                         <td><code style="color:var(--sidebar); font-weight:700;">${f.cadena}</code></td>
+                         <td><span class="status-badge ${f.nfa}">${f.nfa ? 'ACEPTADA' : 'RECHAZADA'}</span></td>
+                         <td><span class="status-badge ${f.dfa}">${f.dfa ? 'ACEPTADA' : 'RECHAZADA'}</span></td>
+                         <td><span class="status-badge ${f.min}">${f.min ? 'ACEPTADA' : 'RECHAZADA'}</span></td></tr>`;
+                });
+                document.getElementById('resultados').innerHTML = html + "</tbody></table>";
+            } catch (e) {
+                alert("Error al conectar con el backend.");
+            }
+        }
+
+        function abrirZoom(src, titulo) {
+            const modal = document.getElementById('modalZoom');
+            document.getElementById('imgZoomed').src = src;
+            document.getElementById('modalTitulo').innerText = titulo;
+            modal.style.display = "flex";
+        }
+
+        actualizarSugerencias();
+    </script>
+</body>
+
+</html>
