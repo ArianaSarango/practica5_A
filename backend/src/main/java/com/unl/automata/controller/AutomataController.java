@@ -79,7 +79,7 @@ public class AutomataController {
     private Automata crearIDSAFND() {
         Automata a = new Automata("IDS_AFND");
         a.estadoInicial = "q0";
-<<<<<<< HEAD
+        // Versión robusta con alfabeto S, A, R, D
         a.agregarTransicion("q0", "A", "q0");
         a.agregarTransicion("q0", "D", "q0");
         a.agregarTransicion("q0", "R", "q0");
@@ -96,15 +96,6 @@ public class AutomataController {
         a.agregarTransicion("q3", "D", "q3");
         a.agregarTransicion("q3", "A", "q3");
         a.estadosFinales.add("q3");
-=======
-        // Transiciones con el nuevo alfabeto S, A, R, D
-        a.agregarTransicion("q0", "S", "q0"); // Bucle en S
-        a.agregarTransicion("q0", "S", "q1");
-        a.agregarTransicion("q1", "A", "q2");
-        a.agregarTransicion("q2", "R", "q3");
-        a.agregarTransicion("q3", "D", "q4");
-        a.estadosFinales.add("q4");
->>>>>>> 1387bb3db89cefec268015fd607a81e6102e1882
         return a;
     }
 
