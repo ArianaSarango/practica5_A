@@ -57,8 +57,8 @@ public class AutomataController {
         Automata a = new Automata("Comprador_AFND");
         a.estadoInicial = "q0";
         a.agregarTransicion("q0", "H", "q1");
-        a.agregarTransicion("q1", "S", "q1");
         a.agregarTransicion("q1", "S", "q2");
+        a.agregarTransicion("q2", "S", "q2");
         a.agregarTransicion("q2", "C", "q3");
         a.estadosFinales.add("q3");
         return a;
@@ -68,9 +68,20 @@ public class AutomataController {
         Automata a = new Automata("IDS_AFND");
         a.estadoInicial = "q0";
         a.agregarTransicion("q0", "A", "q0");
-        a.agregarTransicion("q0", "A", "q1");
-        a.agregarTransicion("q1", "C", "q2");
-        a.agregarTransicion("q2", "K", "q3");
+        a.agregarTransicion("q0", "D", "q0");
+        a.agregarTransicion("q0", "R", "q0");
+        a.agregarTransicion("q0", "S", "q1");
+        a.agregarTransicion("q1", "S", "q1");
+        a.agregarTransicion("q1", "R", "q0");
+        a.agregarTransicion("q1", "A", "q2");
+        a.agregarTransicion("q2", "A", "q2");
+        a.agregarTransicion("q2", "S", "q1");
+        a.agregarTransicion("q2", "D", "q0");
+        a.agregarTransicion("q2", "R", "q3");
+        a.agregarTransicion("q3", "S", "q3");
+        a.agregarTransicion("q3", "R", "q3");
+        a.agregarTransicion("q3", "D", "q3");
+        a.agregarTransicion("q3", "A", "q3");
         a.estadosFinales.add("q3");
         return a;
     }
@@ -80,9 +91,18 @@ public class AutomataController {
         a.estadoInicial = "q0";
         a.agregarTransicion("q0", "K", "q1");
         a.agregarTransicion("q1", "G", "q2");
-        a.agregarTransicion("q2", "X", "q2");
+        a.agregarTransicion("q2", "X", "q4");
+        a.agregarTransicion("q2", "K", "q2");
+        a.agregarTransicion("q2", "G", "q2");
         a.agregarTransicion("q2", "F", "q3");
+        a.agregarTransicion("q3", "F", "q3");
+        a.agregarTransicion("q3", "X", "q4");
+        a.agregarTransicion("q4", "X", "q4");
+        a.agregarTransicion("q4", "F", "q5");
+        a.agregarTransicion("q4", "G", "q2");
+        a.agregarTransicion("q4", "K", "q2");
         a.estadosFinales.add("q3");
+        a.estadosFinales.add("q5");
         return a;
     }
 }
